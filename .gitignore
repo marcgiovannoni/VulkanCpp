@@ -1,0 +1,20 @@
+# Mac OS X files to be ignored.
+*.DS_Store
+
+# Git backup files
+*.merge_file_*
+*.orig
+
+# CMake default build products directories.
+/cpp/build/
+/cpp/build_android
+
+# Visual Studio files to be ignored.
+*.suo
+*.sdf
+*.opensdf
+*.vcxproj.user
+*.opendb
+
+project.lock.json
+/buildproducts
