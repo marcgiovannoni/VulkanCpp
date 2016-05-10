@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FEE9402D-FB59-44AD-B99A-8B255DA6CED7}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GoogleTest</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(SolutionDir), base.props))\base.props" />
+  <Import Project="$(PropertySheetsRoot)Utils.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(PropertySheetsRoot)Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <ClInclude Include="external\googletest\include\gtest\gtest-death-test.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-message.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-param-test.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-printers.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-spi.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-test-part.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest-typed-test.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest_pred_impl.h" />
+    <ClInclude Include="external\googletest\include\gtest\gtest_prod.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="external\googletest\src\gtest-death-test.cc" />
+    <ClCompile Include="external\googletest\src\gtest-filepath.cc" />
+    <ClCompile Include="external\googletest\src\gtest-port.cc" />
+    <ClCompile Include="external\googletest\src\gtest-printers.cc" />
+    <ClCompile Include="external\googletest\src\gtest-test-part.cc" />
+    <ClCompile Include="external\googletest\src\gtest-typed-test.cc" />
+    <ClCompile Include="external\googletest\src\gtest.cc" />
+    <ClCompile Include="external\googletest\src\gtest_main.cc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

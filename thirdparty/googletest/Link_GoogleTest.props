@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_GoogleTest>Link</ProjectDeps_UseLinkGuard_GoogleTest>
+  </PropertyGroup>
+  <ItemGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{fee9402d-fb59-44ad-b99a-8b255da6ced7}')">
+    <ProjectReference Include="$([MSBuild]::MakeRelative('$(ProjectDir)', '$(MSBuildThisFileDirectory)GoogleTest.vcxproj'))">
+      <Project>{fee9402d-fb59-44ad-b99a-8b255da6ced7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
