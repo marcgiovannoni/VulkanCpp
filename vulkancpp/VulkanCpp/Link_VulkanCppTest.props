@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_VulkanCppTest>Link</ProjectDeps_UseLinkGuard_VulkanCppTest>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+      <Import Project="$(SourceRoot)vulkancpp\VulkanCpp\Link_VulkanCpp.props" Condition="'$(ProjectDeps_UseLinkGuard_VulkanCpp)' == ''" />
+  </ImportGroup>
+  <ItemGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{ac4c55d0-46b4-4bce-8270-7ca92bcdcfa3}')">
+    <ProjectReference Include="$([MSBuild]::MakeRelative('$(ProjectDir)', '$(MSBuildThisFileDirectory)VulkanCppTest.vcxproj'))">
+      <Project>{ac4c55d0-46b4-4bce-8270-7ca92bcdcfa3}</Project>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

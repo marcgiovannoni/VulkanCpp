@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AD31A5B8-3C49-49F6-B325-C82E7E6011A0}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VulkanCpp</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(SolutionDir), base.props))\base.props" />
+  <Import Project="$(PropertySheetsRoot)Utils.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(PropertySheetsRoot)Common.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <ClInclude Include="include\VulkanCpp\CommandBuffer.h" />
+    <ClInclude Include="include\VulkanCpp\CommandPool.h" />
+    <ClInclude Include="include\VulkanCpp\Device.h" />
+    <ClInclude Include="include\VulkanCpp\Fence.h" />
+    <ClInclude Include="include\VulkanCpp\Image.h" />
+    <ClInclude Include="include\VulkanCpp\ImageView.h" />
+    <ClInclude Include="include\VulkanCpp\Instance.h" />
+    <ClInclude Include="include\VulkanCpp\PhysicalDevice.h" />
+    <ClInclude Include="include\VulkanCpp\Pipeline.h" />
+    <ClInclude Include="include\VulkanCpp\PipelineLayout.h" />
+    <ClInclude Include="include\VulkanCpp\Queue.h" />
+    <ClInclude Include="include\VulkanCpp\RenderPass.h" />
+    <ClInclude Include="include\VulkanCpp\Semaphore.h" />
+    <ClInclude Include="include\VulkanCpp\ShaderModule.h" />
+    <ClInclude Include="include\VulkanCpp\SurfaceKHR.h" />
+    <ClInclude Include="include\VulkanCpp\SwapchainKHR.h" />
+    <ClInclude Include="include\VulkanCpp\VulkanCpp.h" />
+    <ClInclude Include="include\VulkanCpp\VulkanCpp_Fwd.h" />
+    <ClInclude Include="include\VulkanCpp\VkException.h" />
+    <ClInclude Include="src\VkDebugLogging.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Commandbuffer.cpp" />
+    <ClCompile Include="src\CommandPool.cpp" />
+    <ClCompile Include="src\Device.cpp" />
+    <ClCompile Include="src\Fence.cpp" />
+    <ClCompile Include="src\Image.cpp" />
+    <ClCompile Include="src\ImageView.cpp" />
+    <ClCompile Include="src\Instance.cpp" />
+    <ClCompile Include="src\PhysicalDevice.cpp" />
+    <ClCompile Include="src\Pipeline.cpp" />
+    <ClCompile Include="src\PipelineLayout.cpp" />
+    <ClCompile Include="src\Queue.cpp" />
+    <ClCompile Include="src\RenderPass.cpp" />
+    <ClCompile Include="src\Semaphore.cpp" />
+    <ClCompile Include="src\ShaderModule.cpp" />
+    <ClCompile Include="src\SurfaceKHR.cpp" />
+    <ClCompile Include="src\SwapchainKHR.cpp" />
+    <ClCompile Include="src\VkException.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

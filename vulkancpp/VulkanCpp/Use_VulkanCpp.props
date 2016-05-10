@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SourceRoot)vulkancpp\VulkanCpp\Link_VulkanCpp.props" Condition="'$(ProjectDeps_UseLinkGuard_VulkanCpp)' == ''" />
+  </ImportGroup>
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_VulkanCpp>Use</ProjectDeps_UseLinkGuard_VulkanCpp>
+    <ProjectDeps_UseLinkMode_VulkanCpp Condition="'$(ProjectGUID)' == '{ad31a5b8-3c49-49f6-b325-c82e7e6011a0}'">Use</ProjectDeps_UseLinkMode_VulkanCpp>
+    <ProjectDeps_UseLinkMode_VulkanCpp Condition="'$(ProjectGUID)' != '{ad31a5b8-3c49-49f6-b325-c82e7e6011a0}'">Link</ProjectDeps_UseLinkMode_VulkanCpp>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SourceRoot)thirdparty\cpp-utils\$(ProjectDeps_UseLinkMode_VulkanCpp)_DebugLogging.props" Condition="('$(ProjectDeps_UseLinkGuard_DebugLogging)' == '') Or (('$(ProjectDeps_UseLinkGuard_DebugLogging)' == 'Link') And ('$(ProjectDeps_UseLinkMode_VulkanCpp)' == 'Use'))" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.0.8.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

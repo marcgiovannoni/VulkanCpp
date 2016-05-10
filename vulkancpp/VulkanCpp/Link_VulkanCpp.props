@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_VulkanCpp>Link</ProjectDeps_UseLinkGuard_VulkanCpp>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SourceRoot)thirdparty\cpp-utils\Link_DebugLogging.props" Condition="'$(ProjectDeps_UseLinkGuard_DebugLogging)' == ''" />
+  </ImportGroup>
+  <ItemGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{ad31a5b8-3c49-49f6-b325-c82e7e6011a0}')">
+    <ProjectReference Include="$([MSBuild]::MakeRelative('$(ProjectDir)', '$(MSBuildThisFileDirectory)VulkanCpp.vcxproj'))">
+      <Project>{ad31a5b8-3c49-49f6-b325-c82e7e6011a0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{8283a640-2477-43f7-abd8-9ed24c82be65}')">
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">C:\VulkanSDK\1.0.8.0\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32'">C:\VulkanSDK\1.0.8.0\Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SourceRoot)vulkancpp\VulkanCpp\Link_VulkanCppTest.props" Condition="'$(ProjectDeps_UseLinkGuard_VulkanCppTest)' == ''" />
+  </ImportGroup>
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_VulkanCppTest>Use</ProjectDeps_UseLinkGuard_VulkanCppTest>
+    <ProjectDeps_UseLinkMode_VulkanCppTest Condition="'$(ProjectGUID)' == '{ac4c55d0-46b4-4bce-8270-7ca92bcdcfa3}'">Use</ProjectDeps_UseLinkMode_VulkanCppTest>
+    <ProjectDeps_UseLinkMode_VulkanCppTest Condition="'$(ProjectGUID)' != '{ac4c55d0-46b4-4bce-8270-7ca92bcdcfa3}'">Link</ProjectDeps_UseLinkMode_VulkanCppTest>
+  </PropertyGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(SourceRoot)vulkancpp\VulkanCpp\$(ProjectDeps_UseLinkMode_VulkanCppTest)_VulkanCpp.props" Condition="('$(ProjectDeps_UseLinkGuard_VulkanCpp)' == '') Or (('$(ProjectDeps_UseLinkGuard_VulkanCpp)' == 'Link') And ('$(ProjectDeps_UseLinkMode_VulkanCppTest)' == 'Use'))" />
+    <Import Project="$(SourceRoot)thirdparty\googletest\$(ProjectDeps_UseLinkMode_VulkanCppTest)_GoogleTest.props" Condition="('$(ProjectDeps_UseLinkGuard_GoogleTest)' == '') Or (('$(ProjectDeps_UseLinkGuard_GoogleTest)' == 'Link') And ('$(ProjectDeps_UseLinkMode_VulkanCppTest)' == 'Use'))" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
