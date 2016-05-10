@@ -1,0 +1,18 @@
+// For debug builds, only build the active architecture.
+ONLY_ACTIVE_ARCH = YES
+
+// Put the debug symbols in the executable.
+DEBUG_INFORMATION_FORMAT = dwarf
+
+// No documentation on what this does, but Xcode sets it to true for debug, and
+// apparently things break if it's not set.
+ENABLE_TESTABILITY = YES
+
+// No optimization in debug.
+GCC_OPTIMIZATION_LEVEL = 0
+
+// Define _DEBUG and DEBUF.
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 _DEBUG=1 $(inherited)
+
+// Unknown, undocumented, variable that Xcode sets in default projects.
+MTL_ENABLE_DEBUG_INFO = YES

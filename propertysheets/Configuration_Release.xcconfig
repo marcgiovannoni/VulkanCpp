@@ -1,0 +1,18 @@
+// Build all architectures for release builds.
+ONLY_ACTIVE_ARCH = NO
+
+// Use dsym for debug symbols.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+// Validate the build product (runs some basic checks to see if if it'll fail
+// basic automated validation for the app store).
+VALIDATE_PRODUCT = YES
+
+// Disable Foundation assertions in release mode.
+ENABLE_NS_ASSERTIONS = NO
+
+// Define NDEBUG and DEBUF.
+GCC_PREPROCESSOR_DEFINITIONS = NDEBUG=1 $(inherited)
+
+// Unknown, undocumented, variable that Xcode sets in default projects.
+MTL_ENABLE_DEBUG_INFO = NO

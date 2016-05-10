@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutDir>$(BuildProductsRoot)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(BuildProductsRoot)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <WarningLevel>Level4</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <MinimalRebuild>false</MinimalRebuild>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <CompileAsWinRT Condition="'$(Keyword)'!='WindowsRuntimeComponent'">false</CompileAsWinRT>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateWindowsMetadata Condition="'$(Keyword)'!='WindowsRuntimeComponent'">false</GenerateWindowsMetadata>
+    </Link>
+  </ItemDefinitionGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(PropertySheetsRoot)Platform_$(Platform).props" Condition="exists('$(PropertySheetsRoot)Platform_$(Platform).props')" />
+    <Import Project="$(PropertySheetsRoot)Configuration_$(Configuration).props" Condition="exists('$(PropertySheetsRoot)Configuration_$(Configuration).props')" />
+    <Import Project="$(PropertySheetsRoot)ConfigType_$(ConfigurationType).props" Condition="exists('$(PropertySheetsRoot)ConfigType_$(ConfigurationType).props')" />
+    <Import Project="$(ProjectDir)Use_$(ProjectName).props" Condition="exists('$(ProjectDir)Use_$(ProjectName).props')" />
+    <Import Project="$(ProjectDir)Link_$(ProjectName).props" Condition="exists('$(ProjectDir)Link_$(ProjectName).props') And !exists('$(ProjectDir)Use_$(ProjectName).props')" />
+    <Import Project="$(ProjectDir)Project_$(ProjectName).props" Condition="exists('$(ProjectDir)Project_$(ProjectName).props')" />
+  </ImportGroup>
+</Project>
