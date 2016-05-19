@@ -4,33 +4,34 @@
  *  Created by Marc Giovannoni on 22/04/2016
  */
 
+#include <stdexcept>
 #include "VulkanCpp/VkException.h"
 
 using namespace VulkanCpp;
 
-VkException::VkException(VkResult error) : _error(error)
+VkException::VkException(const char* error) : _error(error)
 {
-    // Empty
-};
+    std::logic_error(this->_error);
+}
 
 VkException::VkException(VkException&& src)
 : _error(src._error)
 {
     // Empty
-};
+}
 
 VkException::VkException(const VkException& src)
 : _error(src._error)
 {
     // Empty
-};
+}
 
 VkException::~VkException()
 {
     // Empty
-};
+}
 
-VkResult VkException::getError() const
+const char* VkException::getError() const
 {
     return (this->_error);
-};
+}
