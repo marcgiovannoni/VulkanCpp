@@ -57,6 +57,7 @@
     <ClInclude Include="include\VulkanCpp\VulkanCpp.h" />
     <ClInclude Include="include\VulkanCpp\VulkanCpp_Fwd.h" />
     <ClInclude Include="include\VulkanCpp\VkException.h" />
+    <ClInclude Include="src\Internal.hpp" />
     <ClInclude Include="src\VkDebugLogging.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClCompile Include="test_src\VkWrapperTest.cpp" />
     <ClCompile Include="test_src\main.cpp" />
     <ClCompile Include="test_src\InstanceTest.cpp" />
   </ItemGroup>
