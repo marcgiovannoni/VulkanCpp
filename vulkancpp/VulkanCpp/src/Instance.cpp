@@ -24,9 +24,9 @@ Instance::Instance(const std::vector<const char *>& layers, const std::vector<co
     vkInstanceCreateInfo.pApplicationInfo = nullptr;
     vkInstanceCreateInfo.pNext = nullptr;
     vkInstanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(layers.size());
-    vkInstanceCreateInfo.ppEnabledLayerNames = &layers[0];
+    vkInstanceCreateInfo.ppEnabledLayerNames = layers.data();
     vkInstanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-    vkInstanceCreateInfo.ppEnabledExtensionNames = &extensions[0];
+    vkInstanceCreateInfo.ppEnabledExtensionNames = extensions.data();
 
     VK_CHECK_ERROR(Instance::Instance, vkCreateInstance(&vkInstanceCreateInfo, nullptr, &this->_vkHandle));
 }

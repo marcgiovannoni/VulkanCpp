@@ -27,7 +27,7 @@ namespace VulkanCpp
     {
     public:
         CommandPool();
-        CommandPool(const std::shared_ptr<Device>& device, VkCommandPoolCreateInfo* vkCommandPoolCreateInfo);
+        CommandPool(const std::shared_ptr<Device>& device, uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags);
         ~CommandPool();
 
     public:

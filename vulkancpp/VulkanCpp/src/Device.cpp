@@ -13,9 +13,31 @@
 
 using namespace VulkanCpp;
 
-Device::Device(const PhysicalDevice& physicalDevice, VkDeviceCreateInfo* deviceCreateInfo)
+Device::Device()
 {
-    VK_CHECK_ERROR(Device::Device, vkCreateDevice(static_cast<VkPhysicalDevice>(physicalDevice), deviceCreateInfo, nullptr, &this->_vkHandle));
+    // Empty
+}
+
+Device::Device(const PhysicalDevice& physicalDevice,
+    const std::vector<DeviceQueueCreateInfo>& deviceQueueCreateInfo,
+    const std::vector<const char*>& layers,
+    const std::vector<const char*>& extensions)
+{
+    std::vector<VkDeviceQueueCreateInfo> vkDeviceQueueCreateInfos(deviceQueueCreateInfo.cbegin(), deviceQueueCreateInfo.cend());
+
+    VkDeviceCreateInfo vkDeviceCreateInfo;
+
+    vkDeviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    vkDeviceCreateInfo.pNext = nullptr;
+    vkDeviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(deviceQueueCreateInfo.size());
+    vkDeviceCreateInfo.pQueueCreateInfos = vkDeviceQueueCreateInfos.data();
+    vkDeviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(layers.size());
+    vkDeviceCreateInfo.ppEnabledLayerNames = layers.data();
+    vkDeviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    vkDeviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+    vkDeviceCreateInfo.pEnabledFeatures = nullptr;
+
+    VK_CHECK_ERROR(Device::Device, vkCreateDevice(static_cast<VkPhysicalDevice>(physicalDevice), &vkDeviceCreateInfo, nullptr, &this->_vkHandle));
 }
 
 Device::~Device()

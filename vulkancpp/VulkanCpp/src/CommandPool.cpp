@@ -16,9 +16,16 @@ CommandPool::CommandPool()
     // Empty
 }
 
-CommandPool::CommandPool(const std::shared_ptr<Device>& device, VkCommandPoolCreateInfo* vkCommandPoolCreateInfo) : VkWrapper(device)
+CommandPool::CommandPool(const std::shared_ptr<Device>& device, uint32_t queueFamilyIndex, VkCommandPoolCreateFlags flags) : VkWrapper(device)
 {
-    VK_CHECK_ERROR(CommandPool::CommandPool, vkCreateCommandPool(static_cast<VkDevice>(*device), vkCommandPoolCreateInfo, nullptr, &this->_vkHandle));
+    VkCommandPoolCreateInfo vkCommandPoolCreateInfo;
+
+    vkCommandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    vkCommandPoolCreateInfo.queueFamilyIndex = queueFamilyIndex;
+    vkCommandPoolCreateInfo.flags = flags;
+    vkCommandPoolCreateInfo.pNext = nullptr;
+
+    VK_CHECK_ERROR(CommandPool::CommandPool, vkCreateCommandPool(static_cast<VkDevice>(*device), &vkCommandPoolCreateInfo, nullptr, &this->_vkHandle));
 }
 
 CommandPool::~CommandPool()

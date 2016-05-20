@@ -25,6 +25,24 @@
 
 namespace VulkanCpp
 {
+    typedef struct DeviceQueueCreateInfo
+    {
+        uint32_t  queueFamilyIndex;
+        std::vector<float> queuePriorities;
+
+        explicit operator VkDeviceQueueCreateInfo() const
+        {
+            return VkDeviceQueueCreateInfo{
+                VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                nullptr,
+                0,
+                queueFamilyIndex,
+                static_cast<uint32_t>(queuePriorities.size()),
+                queuePriorities.data()
+            };
+        }
+    } DeviceQueueCreateInfo;
+
     class Device : public Internal::VkWrapper<VkDevice>, public std::enable_shared_from_this<Device>
     {
     public:
@@ -47,7 +65,10 @@ namespace VulkanCpp
 
     public:
         Device();
-        Device(const PhysicalDevice& physicalDevice, VkDeviceCreateInfo* deviceCreateInfo);
+        Device(const PhysicalDevice& physicalDevice,
+            const std::vector<DeviceQueueCreateInfo>& deviceQueueCreateInfo,
+            const std::vector<const char*>& layers,
+            const std::vector<const char*>& extensions);
         ~Device();
 
     public:
