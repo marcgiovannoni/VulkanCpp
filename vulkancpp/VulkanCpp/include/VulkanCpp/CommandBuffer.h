@@ -21,6 +21,8 @@
 
 #include "VulkanCpp_Fwd.h"
 #include "../src/Internal.hpp"
+#include "RenderPass.h"
+#include "Framebuffer.h"
 
 namespace VulkanCpp
 {
@@ -28,7 +30,7 @@ namespace VulkanCpp
     {
     public:
         CommandBuffer();
-        CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBuffer);
+        CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferLevel level);
         ~CommandBuffer();
 
     protected:
@@ -39,15 +41,46 @@ namespace VulkanCpp
         CommandBuffer(CommandBuffer&&) = default;
         CommandBuffer& operator=(const CommandBuffer&) = delete;
         CommandBuffer& operator=(CommandBuffer&&) = default;
-        
-        void begin(VkCommandBufferBeginInfo* vkCommandBufferBeginInfo) const;
+
+        template <typename... _Command>
+        void record(VkCommandBufferUsageFlags flags, _Command&&... commands)
+        {
+            this->begin(flags);
+            bool vars[] = { this->cmd(std::forward<_Command>(commands))... };
+            this->end();
+        }
+
+        template <typename... _Command>
+        void recordWithInheritance(VkCommandBufferUsageFlags flags,
+            const RenderPass& renderPass,
+            uint32_t subpass,
+            const Framebuffer& framebuffer,
+            bool occlusionQueryEnable,
+            VkQueryControlFlags queryFlags,
+            VkQueryPipelineStatisticFlags pipelineStatistics,
+            _Command&&... commands)
+        {
+            this->begin(flags, renderPass, subpass, framebuffer, occlusionQueryEnable, queryFlags, pipelineStatistics);
+            bool vars[] = { this->cmd(std::forward<_Command>(commands))... };
+            this->end();
+        }
+
+    public:
+        void begin(VkCommandBufferUsageFlags flags);
+        void begin(VkCommandBufferUsageFlags flags,
+            const RenderPass& renderPass,
+            uint32_t subpass,
+            const Framebuffer& framebuffer,
+            bool occlusionQueryEnable,
+            VkQueryControlFlags queryFlags,
+            VkQueryPipelineStatisticFlags pipelineStatistics);
         void end() const;
 
         // Command
         template <class _CommandType>
-        void cmd(const _CommandType& commandType);
+        bool cmd(const _CommandType& commandType);
 
-        static std::vector<CommandBuffer> allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo);
+        static std::vector<CommandBuffer> allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, uint32_t bufferCount, VkCommandBufferLevel level);
     };
 }
 

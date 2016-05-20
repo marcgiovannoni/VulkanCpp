@@ -34,7 +34,7 @@ namespace VulkanCpp
 
         explicit operator VkMemoryBarrier() const
         {
-            return VkMemoryBarrier {
+            return VkMemoryBarrier{
                 VK_STRUCTURE_TYPE_MEMORY_BARRIER,
                 nullptr,
                 srcAccessMask,
@@ -135,6 +135,11 @@ namespace VulkanCpp
         int32_t vertexOffset;
         uint32_t firstInstance;
     } DrawIndexed;
+
+    typedef struct ExecCommands
+    {
+        std::vector<std::reference_wrapper<CommandBuffer>> commands;
+    } ExecCommands;
 }
 
 #endif  //  __COMMAND_H__

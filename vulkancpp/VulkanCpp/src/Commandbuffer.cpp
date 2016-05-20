@@ -24,15 +24,18 @@ CommandBuffer::CommandBuffer(VkCommandBuffer vkCommandBuffer, const std::shared_
 
 }
 
-CommandBuffer::CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo)
+CommandBuffer::CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferLevel level)
     : VkWrapper(device, commandPool)
 {
-    if (vkCommandBufferAllocateInfo->commandBufferCount != 1)
-    {
-        throw new VkException("Can only allocate one CommandPool. Use allocate() for batch allocation.");
-    }
+    VkCommandBufferAllocateInfo vkCommandBufferAllocateInfo;
 
-    VK_CHECK_ERROR(CommandBuffer::CommandBuffer, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &this->_vkHandle));
+    vkCommandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    vkCommandBufferAllocateInfo.commandPool = static_cast<VkCommandPool>(*commandPool);
+    vkCommandBufferAllocateInfo.commandBufferCount = 1;
+    vkCommandBufferAllocateInfo.level = level;
+    vkCommandBufferAllocateInfo.pNext = nullptr;
+
+    VK_CHECK_ERROR(CommandBuffer::CommandBuffer, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), &vkCommandBufferAllocateInfo, &this->_vkHandle));
 }
 
 CommandBuffer::~CommandBuffer()
@@ -43,9 +46,43 @@ CommandBuffer::~CommandBuffer()
     }
 }
 
-void CommandBuffer::begin(VkCommandBufferBeginInfo* vkCommandBufferBeginInfo) const
+void CommandBuffer::begin(VkCommandBufferUsageFlags flags)
 {
-    VK_CHECK_ERROR(CommandBuffer::begin, vkBeginCommandBuffer(this->_vkHandle, vkCommandBufferBeginInfo));
+    VkCommandBufferBeginInfo vkCommandBufferBeginInfo = {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        nullptr,
+        flags,
+        nullptr
+    };
+    VK_CHECK_ERROR(CommandBuffer::begin, vkBeginCommandBuffer(this->_vkHandle, &vkCommandBufferBeginInfo));
+}
+
+void CommandBuffer::begin(VkCommandBufferUsageFlags flags,
+    const RenderPass& renderPass,
+    uint32_t subpass,
+    const Framebuffer& framebuffer,
+    bool occlusionQueryEnable,
+    VkQueryControlFlags queryFlags,
+    VkQueryPipelineStatisticFlags pipelineStatistics)
+{
+    VkCommandBufferInheritanceInfo vkCommandBufferInheritanceInfo = {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
+        nullptr,
+        static_cast<VkRenderPass>(renderPass),
+        subpass,
+        static_cast<VkFramebuffer>(framebuffer),
+        static_cast<VkBool32>(occlusionQueryEnable),
+        queryFlags,
+        pipelineStatistics
+    };
+    VkCommandBufferBeginInfo vkCommandBufferBeginInfo = {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+        nullptr,
+        flags,
+        &vkCommandBufferInheritanceInfo
+    };
+
+    VK_CHECK_ERROR(CommandBuffer::begin, vkBeginCommandBuffer(this->_vkHandle, &vkCommandBufferBeginInfo));
 }
 
 void CommandBuffer::end() const
@@ -54,7 +91,7 @@ void CommandBuffer::end() const
 }
 
 template <>
-void CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
+bool CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
 {
     std::vector<VkMemoryBarrier> vkMemoryBarriers(pipelineBarrier.memoryBarriers.cbegin(), pipelineBarrier.memoryBarriers.cend());
     std::vector<VkBufferMemoryBarrier> vkBufferMemoryBarriers(pipelineBarrier.bufferMemoryBarriers.cbegin(), pipelineBarrier.bufferMemoryBarriers.cend());
@@ -64,16 +101,18 @@ void CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
         static_cast<uint32_t>(pipelineBarrier.memoryBarriers.size()), vkMemoryBarriers.data(),
         static_cast<uint32_t>(pipelineBarrier.bufferMemoryBarriers.size()), vkBufferMemoryBarriers.data(),
         static_cast<uint32_t>(pipelineBarrier.imageMemoryBarriers.size()), vkImageMemoryBarriers.data());
+    return true;
 }
 
 template <>
-void CommandBuffer::cmd(const BindPipeline& bindPipeline)
+bool CommandBuffer::cmd(const BindPipeline& bindPipeline)
 {
     vkCmdBindPipeline(this->_vkHandle, bindPipeline.pipelineBindPoint, static_cast<VkPipeline>(bindPipeline.pipeline));
+    return true;
 }
 
 template <>
-void CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
+bool CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
 {
     std::vector<VkBuffer> vkBuffers(bindVertexBuffer.buffers.size());
 
@@ -84,25 +123,49 @@ void CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
     std::vector<VkDeviceSize> vkOffsets(bindVertexBuffer.offsets.cbegin(), bindVertexBuffer.offsets.cend());
 
     vkCmdBindVertexBuffers(this->_vkHandle, bindVertexBuffer.firstBinding, static_cast<uint32_t>(bindVertexBuffer.buffers.size()), vkBuffers.data(), bindVertexBuffer.offsets.data());
+    return true;
 }
 
 template <>
-void CommandBuffer::cmd(const BindIndexBuffer& bindIndexBuffer)
+bool CommandBuffer::cmd(const BindIndexBuffer& bindIndexBuffer)
 {
     vkCmdBindIndexBuffer(this->_vkHandle, static_cast<VkBuffer>(bindIndexBuffer.buffer), bindIndexBuffer.offset, bindIndexBuffer.indexType);
+    return true;
 }
 
 template <>
-void CommandBuffer::cmd(const DrawIndexed& drawIndexed)
+bool CommandBuffer::cmd(const DrawIndexed& drawIndexed)
 {
     vkCmdDrawIndexed(this->_vkHandle, drawIndexed.indexCount, drawIndexed.instanceCount, drawIndexed.firstIndex, drawIndexed.vertexOffset, drawIndexed.firstInstance);
+    return true;
 }
 
-std::vector<CommandBuffer> CommandBuffer::allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo)
+template <>
+bool CommandBuffer::cmd(const ExecCommands& execCommands)
 {
-    std::vector<VkCommandBuffer> vkCommandBuffers(vkCommandBufferAllocateInfo->commandBufferCount);
+    std::vector<VkCommandBuffer> vkCommandBuffers(execCommands.commands.size());
 
-    VK_CHECK_ERROR(CommandBuffer::allocate, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &vkCommandBuffers[0]));
+    for (size_t i = 0, end = execCommands.commands.size(); i != end; ++i)
+    {
+        vkCommandBuffers[i] = static_cast<VkCommandBuffer>(execCommands.commands[i].get());
+    }
+
+    vkCmdExecuteCommands(this->_vkHandle, static_cast<uint32_t>(execCommands.commands.size()), vkCommandBuffers.data());
+    return true;
+}
+
+std::vector<CommandBuffer> CommandBuffer::allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, uint32_t bufferCount, VkCommandBufferLevel level)
+{
+    std::vector<VkCommandBuffer> vkCommandBuffers(bufferCount);
+    VkCommandBufferAllocateInfo vkCommandBufferAllocateInfo;
+
+    vkCommandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    vkCommandBufferAllocateInfo.commandPool = static_cast<VkCommandPool>(*commandPool);
+    vkCommandBufferAllocateInfo.commandBufferCount = bufferCount;
+    vkCommandBufferAllocateInfo.level = level;
+    vkCommandBufferAllocateInfo.pNext = nullptr;
+
+    VK_CHECK_ERROR(CommandBuffer::allocate, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), &vkCommandBufferAllocateInfo, &vkCommandBuffers[0]));
 
     std::vector<CommandBuffer> commandBuffers;
 
