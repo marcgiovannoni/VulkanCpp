@@ -30,14 +30,14 @@ VkInstanceCreateInfo vkInstanceCreateInfo = {
     nullptr
 };
 
-TEST(IstanceTest, constructor_destructor)
+TEST(InstanceTest, constructor_destructor)
 {
     Instance instance(&vkInstanceCreateInfo);
 
     EXPECT_TRUE(true);
 }
 
-TEST(IstanceTest, move_copy_constructor)
+TEST(InstanceTest, move_copy_constructor)
 {
     Instance instance(&vkInstanceCreateInfo);
     VkInstance ptr = static_cast<VkInstance>(instance);
@@ -47,7 +47,7 @@ TEST(IstanceTest, move_copy_constructor)
         static_cast<VkInstance>(instance2) == ptr);
 }
 
-TEST(IstanceTest, physical_devices)
+TEST(InstanceTest, physical_devices)
 {
     Instance instance(&vkInstanceCreateInfo);
 
