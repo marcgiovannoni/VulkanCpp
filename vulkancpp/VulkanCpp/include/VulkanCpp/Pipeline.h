@@ -19,29 +19,23 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class Pipeline
+    class Pipeline : public Internal::VkWrapper<VkPipeline, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkPipeline _vkPipeline;
-
     public:
         Pipeline();
         template <typename _VkPipelineCreateInfo>
-        Pipeline(std::shared_ptr<Device> vulkanInstance, _VkPipelineCreateInfo* vkPipelineCreateInfo);
+        Pipeline(const std::shared_ptr<Device>& vulkanInstance, _VkPipelineCreateInfo* vkPipelineCreateInfo);
         ~Pipeline();
 
     public:
-        Pipeline(Pipeline&&);
         Pipeline(const Pipeline&) = delete;
-        Pipeline& operator=(Pipeline&&);
+        Pipeline(Pipeline&&) = default;
         Pipeline& operator=(const Pipeline&) = delete;
-
-        // VkPipeline cast
-        explicit operator VkPipeline() const;
+        Pipeline& operator=(Pipeline&&) = default;
     };
 }
 

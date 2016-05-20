@@ -11,65 +11,26 @@
 
 using namespace VulkanCpp;
 
-Pipeline::Pipeline() : _device(nullptr), _vkPipeline(nullptr)
+Pipeline::Pipeline()
 {
 }
 
 template<>
-Pipeline::Pipeline(std::shared_ptr<Device> device, VkGraphicsPipelineCreateInfo* vkPipelineCreateInfo) : _device(device)
+Pipeline::Pipeline(const std::shared_ptr<Device>& device, VkGraphicsPipelineCreateInfo* vkPipelineCreateInfo) : VkWrapper(device)
 {
-    VkResult err = vkCreateGraphicsPipelines(static_cast<VkDevice>(*this->_device), nullptr, 1, vkPipelineCreateInfo, nullptr, &this->_vkPipeline);
-    VK_LOG_ERROR(Pipeline::Pipeline, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(Pipeline::Pipeline, vkCreateGraphicsPipelines(static_cast<VkDevice>(*device), nullptr, 1, vkPipelineCreateInfo, nullptr, &this->_vkHandle));
 }
 
 template<>
-Pipeline::Pipeline(std::shared_ptr<Device> device, VkComputePipelineCreateInfo* vkPipelineCreateInfo) : _device(device)
+Pipeline::Pipeline(const std::shared_ptr<Device>& device, VkComputePipelineCreateInfo* vkPipelineCreateInfo) : VkWrapper(device)
 {
-    VkResult err = vkCreateComputePipelines(static_cast<VkDevice>(*this->_device), nullptr, 1, vkPipelineCreateInfo, nullptr, &this->_vkPipeline);
-    VK_LOG_ERROR(Pipeline::Pipeline, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(Pipeline::Pipeline, vkCreateComputePipelines(static_cast<VkDevice>(*device), nullptr, 1, vkPipelineCreateInfo, nullptr, &this->_vkHandle));
 }
 
 Pipeline::~Pipeline()
 {
-    if (this->_device != nullptr && this->_vkPipeline != nullptr)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Device>>() != nullptr)
     {
-        vkDestroyPipeline(static_cast<VkDevice>(*this->_device), this->_vkPipeline, nullptr);
+        vkDestroyPipeline(static_cast<VkDevice>(*this->get<std::shared_ptr<Device>>()), this->_vkHandle, nullptr);
     }
-}
-
-Pipeline::Pipeline(Pipeline&& rhs)
-{
-    this->_device = std::move(rhs._device);
-    this->_vkPipeline = std::move(rhs._vkPipeline);
-
-    rhs._device = nullptr;
-    rhs._vkPipeline = nullptr;
-}
-
-Pipeline& Pipeline::operator=(Pipeline&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_device = std::move(rhs._device);
-        this->_vkPipeline = std::move(rhs._vkPipeline);
-
-        rhs._device = nullptr;
-        rhs._vkPipeline = nullptr;
-    }
-    return *this;
-}
-
-Pipeline::operator VkPipeline() const
-{
-    return this->_vkPipeline;
 }

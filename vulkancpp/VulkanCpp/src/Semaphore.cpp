@@ -11,51 +11,20 @@
 
 using namespace VulkanCpp;
 
-Semaphore::Semaphore() : _device(nullptr), _vkSemaphore(nullptr)
+Semaphore::Semaphore()
 {
+    // Empty
 }
 
-Semaphore::Semaphore(std::shared_ptr<Device> device, VkSemaphoreCreateInfo* vkSemaphoreCreateInfo) : _device(device)
+Semaphore::Semaphore(const std::shared_ptr<Device>& device, VkSemaphoreCreateInfo* vkSemaphoreCreateInfo) : VkWrapper(device)
 {
-    VkResult err = vkCreateSemaphore(static_cast<VkDevice>(*device), vkSemaphoreCreateInfo, nullptr, &this->_vkSemaphore);
-    VK_LOG_ERROR(Device::createSemaphore, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(Semaphore::Semaphore, vkCreateSemaphore(static_cast<VkDevice>(*device), vkSemaphoreCreateInfo, nullptr, &this->_vkHandle));
 }
 
 Semaphore::~Semaphore()
 {
-    if (this->_device != nullptr && this->_vkSemaphore != nullptr)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Device>>() != nullptr)
     {
-        vkDestroySemaphore(static_cast<VkDevice>(*this->_device), this->_vkSemaphore, nullptr);
+        vkDestroySemaphore(static_cast<VkDevice>(*this->get<std::shared_ptr<Device>>()), this->_vkHandle, nullptr);
     }
-}
-
-Semaphore::Semaphore(Semaphore&& rhs)
-{
-    this->_device = std::move(rhs._device);
-    this->_vkSemaphore = std::move(rhs._vkSemaphore);
-
-    rhs._device = nullptr;
-    rhs._vkSemaphore = nullptr;
-}
-
-Semaphore& Semaphore::operator=(Semaphore&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_device = std::move(rhs._device);
-        this->_vkSemaphore = std::move(rhs._vkSemaphore);
-        rhs._device = nullptr;
-        rhs._vkSemaphore = nullptr;
-    }
-    return *this;
-}
-
-Semaphore::operator VkSemaphore() const
-{
-    return this->_vkSemaphore;
 }

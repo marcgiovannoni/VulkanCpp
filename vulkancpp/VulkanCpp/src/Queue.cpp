@@ -11,58 +11,27 @@
 
 using namespace VulkanCpp;
 
-Queue::Queue() : _vkQueue(nullptr)
+Queue::Queue()
 {
+    // Empty
 }
 
-Queue::Queue(VkQueue vkQueue) : _vkQueue(vkQueue)
+Queue::Queue(VkQueue vkQueue) : VkWrapper(vkQueue)
 {
+    // Empty
 }
 
 Queue::~Queue()
 {
-}
-
-Queue::Queue(Queue&& rhs)
-{
-    this->_vkQueue = std::move(rhs._vkQueue);
-
-    rhs._vkQueue = nullptr;
-}
-
-Queue& Queue::operator=(Queue&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_vkQueue = std::move(rhs._vkQueue);
-        rhs._vkQueue = nullptr;
-    }
-    return *this;
-}
-
-Queue::operator VkQueue() const
-{
-    return this->_vkQueue;
+    // Empty
 }
 
 void Queue::waitIdle()
 {
-    VkResult err = vkQueueWaitIdle(this->_vkQueue);
-    VK_LOG_ERROR(Queue::waitIdle, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(Queue::waitIdle, vkQueueWaitIdle(this->_vkHandle));
 }
 
-void Queue::submit(VkSubmitInfo* vkSubmitInfo, const Fence& fence)
+void Queue::submit(VkSubmitInfo* vkSubmitInfo)
 {
-    VkResult err = vkQueueSubmit(this->_vkQueue, 1, vkSubmitInfo, static_cast<VkFence>(fence));
-    VK_LOG_ERROR(Queue::submit, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(Queue::waitIdle, vkQueueSubmit(this->_vkHandle, 1, vkSubmitInfo, nullptr));
 }

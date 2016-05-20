@@ -17,6 +17,24 @@ namespace VulkanCpp
     class CommandPool;
     class Semaphore;
     class Image;
+    class SwapchainKHR;
+    class SurfaceKHR;
+    class CommandPool;
+    class CommandBuffer;
+    class ShaderModule;
+    class PipelineLayout;
+    class Buffer;
+    class Pipeline;
+    class RenderPass;
+    class FrameBuffer;
+    struct MemoryBarrier;
+    struct BufferMemoryBarrier;
+    struct ImageMemoryBarrier;
+    struct PipelineBarrier;
+    struct BindPipeline;
+    struct BindVertexBuffer;
+    struct BindIndexBuffer;
+    struct DrawIndexed;
 }
 
 #endif  //  __VULKANCPP_FWD_H__

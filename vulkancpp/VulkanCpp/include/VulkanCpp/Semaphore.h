@@ -19,28 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class Semaphore
+    class Semaphore : public Internal::VkWrapper<VkSemaphore, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkSemaphore _vkSemaphore;
-
     public:
         Semaphore();
-        Semaphore(std::shared_ptr<Device> device, VkSemaphoreCreateInfo* vkSemaphoreCreateInfo);
+        Semaphore(const std::shared_ptr<Device>& device, VkSemaphoreCreateInfo* vkSemaphoreCreateInfo);
         ~Semaphore();
 
     public:
         Semaphore(const Semaphore&) = delete;
+        Semaphore(Semaphore&&) = default;
         Semaphore& operator=(const Semaphore&) = delete;
-        Semaphore(Semaphore&&);
-        Semaphore& operator=(Semaphore&&);
-
-        // VkSemaphore cast
-        explicit operator VkSemaphore() const;
+        Semaphore& operator=(Semaphore&&) = default;
     };
 }
 

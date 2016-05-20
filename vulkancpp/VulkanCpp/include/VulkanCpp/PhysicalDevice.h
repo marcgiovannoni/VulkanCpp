@@ -18,13 +18,14 @@
 // Project includes
 //
 
+#include "VulkanCpp_Fwd.h"
+#include "SurfaceKHR.h"
+#include "../src/Internal.hpp"
+
 namespace VulkanCpp
 {
-    class PhysicalDevice
+    class PhysicalDevice : public Internal::VkWrapper<VkPhysicalDevice>
     {
-    private:
-        VkPhysicalDevice _vkPhysicalDevice;
-
     public:
         PhysicalDevice();
         explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
@@ -32,16 +33,20 @@ namespace VulkanCpp
 
     public:
         PhysicalDevice(const PhysicalDevice&) = delete;
+        PhysicalDevice(PhysicalDevice&&) = default;
         PhysicalDevice& operator=(const PhysicalDevice&) = delete;
-        PhysicalDevice(PhysicalDevice&&);
-        PhysicalDevice& operator=(PhysicalDevice&&) = delete;
-
-        // VkPhysicalDevice cast
-        explicit operator VkPhysicalDevice() const;
+        PhysicalDevice& operator=(PhysicalDevice&&) = default;
 
         // Physical device
-        VkPhysicalDeviceProperties getPhysicalDeviceProperties();
-        std::vector<VkQueueFamilyProperties> getQueueFamilyProperties();
+        VkPhysicalDeviceProperties getPhysicalDeviceProperties() const;
+        std::vector<VkQueueFamilyProperties> getQueueFamilyProperties() const;
+
+        // SurfaceKHR
+        bool getSurfaceSupportKHR(uint32_t graphicsFamilyIndex, const SurfaceKHR& surfaceKHR) const;
+        VkSurfaceCapabilitiesKHR getSurfaceCapabilitiesKHR(const SurfaceKHR& surfaceKHR) const;
+        std::vector<VkSurfaceFormatKHR> getSurfaceFormatsKHR(const SurfaceKHR& surfaceKHR) const;
+        std::vector<VkPresentModeKHR> getSurfacePresentModesKHR(const SurfaceKHR& surfaceKHR) const;
+        VkPhysicalDeviceMemoryProperties getMemoryProperties() const;
     };
 }
 

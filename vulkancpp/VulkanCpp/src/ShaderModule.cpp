@@ -12,54 +12,22 @@
 
 using namespace VulkanCpp;
 
-ShaderModule::ShaderModule() : _device(nullptr), _vkShaderModule(nullptr)
+ShaderModule::ShaderModule()
 {
+    // Empty
 }
 
-ShaderModule::ShaderModule(std::shared_ptr<Device> device, VkShaderModuleCreateInfo* vkShaderModuleCreateInfo) : _device(device)
+ShaderModule::ShaderModule(const std::shared_ptr<Device>& device, VkShaderModuleCreateInfo* vkShaderModuleCreateInfo) : VkWrapper(device)
 {
-    VkResult err = vkCreateShaderModule(static_cast<VkDevice>(*device), vkShaderModuleCreateInfo, nullptr, &this->_vkShaderModule);
-    VK_LOG_ERROR(ShaderModule::ShaderModule, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(ShaderModule::ShaderModule, vkCreateShaderModule(static_cast<VkDevice>(*device), vkShaderModuleCreateInfo, nullptr, &this->_vkHandle));
 }
 
 ShaderModule::~ShaderModule()
 {
-    if (this->_device != nullptr && this->_vkShaderModule != nullptr)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Device>>() != nullptr)
     {
-        vkDestroyShaderModule(static_cast<VkDevice>(*this->_device), this->_vkShaderModule, nullptr);
+        vkDestroyShaderModule(static_cast<VkDevice>(*this->get<std::shared_ptr<Device>>()), this->_vkHandle, nullptr);
     }
-}
-
-ShaderModule::ShaderModule(ShaderModule&& rhs)
-{
-    this->_device = std::move(rhs._device);
-    this->_vkShaderModule = std::move(rhs._vkShaderModule);
-
-    rhs._device = nullptr;
-    rhs._vkShaderModule = nullptr;
-}
-
-ShaderModule& ShaderModule::operator=(ShaderModule&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_device = std::move(rhs._device);
-        this->_vkShaderModule = std::move(rhs._vkShaderModule);
-
-        rhs._device = nullptr;
-        rhs._vkShaderModule = nullptr;
-    }
-    return *this;
-}
-
-ShaderModule::operator VkShaderModule() const
-{
-    return this->_vkShaderModule;
 }
 
 ShaderModule ShaderModule::fromSPVFile(std::shared_ptr<Device> device, const char* filename)

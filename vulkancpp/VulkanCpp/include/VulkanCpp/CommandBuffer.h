@@ -20,38 +20,34 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class CommandBuffer
+    class CommandBuffer : public Internal::VkWrapper<VkCommandBuffer, std::shared_ptr<Device>, std::shared_ptr<CommandPool>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        std::shared_ptr<CommandPool> _commandPool;
-        VkCommandBuffer _vkCommandBuffer;
-
     public:
         CommandBuffer();
-        CommandBuffer(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBufferAllocateInfo* vkCommandBuffer);
+        CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBuffer);
         ~CommandBuffer();
 
     protected:
-        explicit CommandBuffer(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBuffer vkCommandBuffer);
+        CommandBuffer(VkCommandBuffer vkCommandBuffer, const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool);
 
     public:
         CommandBuffer(const CommandBuffer&) = delete;
-        CommandBuffer(CommandBuffer&&);
+        CommandBuffer(CommandBuffer&&) = default;
         CommandBuffer& operator=(const CommandBuffer&) = delete;
-        CommandBuffer& operator=(CommandBuffer&&);
-
-        // VkDevice cast
-        explicit operator VkCommandBuffer() const;
+        CommandBuffer& operator=(CommandBuffer&&) = default;
         
         void begin(VkCommandBufferBeginInfo* vkCommandBufferBeginInfo) const;
         void end() const;
 
-        static std::vector<CommandBuffer> allocate(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo);
-        static void free(std::vector<CommandBuffer>& vector);
+        // Command
+        template <class _CommandType>
+        void cmd(const _CommandType& commandType);
+
+        static std::vector<CommandBuffer> allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo);
     };
 }
 

@@ -19,27 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class CommandPool
+    class CommandPool : public Internal::VkWrapper<VkCommandPool, std::shared_ptr<Device>>
     {
-    private:
-        VkCommandPool _vkCommandPool;
-        std::shared_ptr<Device> _device;
-
     public:
-        CommandPool(std::shared_ptr<Device> device, VkCommandPoolCreateInfo* vkCommandPoolCreateInfo);
+        CommandPool();
+        CommandPool(const std::shared_ptr<Device>& device, VkCommandPoolCreateInfo* vkCommandPoolCreateInfo);
         ~CommandPool();
 
     public:
-        CommandPool(CommandPool&&);
+        CommandPool(CommandPool&&) = default;
         CommandPool(const CommandPool&) = delete;
-        CommandPool& operator=(CommandPool&&);
+        CommandPool& operator=(CommandPool&&) = default;
         CommandPool& operator=(const CommandPool&) = delete;
-
-        // VkCommandPool cast
-        explicit operator VkCommandPool() const;
     };
 }
 

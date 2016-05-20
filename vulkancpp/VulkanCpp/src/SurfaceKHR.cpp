@@ -4,72 +4,37 @@
  *  Created by Marc Giovannoni on 03/05/2016
  */
 
+#include "VulkanCpp/VulkanCpp.h"
 #include "VulkanCpp/SurfaceKHR.h"
 #include "VulkanCpp/VkException.h"
 #include "VulkanCpp/Instance.h"
+#include "VkDebugLogging.hpp"
 
 using namespace VulkanCpp;
 
-SurfaceKHR::SurfaceKHR() : _instance(nullptr), _vkSurfaceKHR(nullptr)
+SurfaceKHR::SurfaceKHR()
 {
+    // Empty
 }
 
 #ifdef VK_USE_PLATFORM_ANDROID_KHR
 template<>
-SurfaceKHR::SurfaceKHR(std::shared_ptr<VulkanInstance> vulkanInstance, VkAndroidSurfaceCreateInfoKHR* surfaceCreateInfoKHR) : _vulkanInstance(vulkanInstance)
+SurfaceKHR::SurfaceKHR(const std::shared_ptr<Instance>& instance, VkAndroidSurfaceCreateInfoKHR* surfaceCreateInfoKHR) : VkWrapper(instance)
 {
-    VkResult err = vkCreateAndroidSurfaceKHR(static_cast<VkInstance>(*this->_instance), surfaceCreateInfoKHR, nullptr, &this->_vkSurfaceKHR);
-    VK_LOG_ERROR(SurfaceKHR::SurfaceKHR, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(SurfaceKHR::SurfaceKHR, vkCreateAndroidSurfaceKHR(static_cast<VkInstance>(*this->get<std::shared_ptr<Instance>>()), surfaceCreateInfoKHR, nullptr, &this->_vkHandle));
 }
 #elif defined VK_USE_PLATFORM_WIN32_KHR
 template<>
-SurfaceKHR::SurfaceKHR(std::shared_ptr<VulkanInstance> vulkanInstance, VkWin32SurfaceCreateInfoKHR* surfaceCreateInfoKHR) : _vulkanInstance(vulkanInstance)
+SurfaceKHR::SurfaceKHR(const std::shared_ptr<Instance>& instance, VkWin32SurfaceCreateInfoKHR* surfaceCreateInfoKHR) : VkWrapper(instance)
 {
-    VkResult err = vkCreateWin32SurfaceKHR(static_cast<VkInstance>(*this->_instance), surfaceCreateInfoKHR, nullptr, &this->_vkSurfaceKHR);
-    VK_LOG_ERROR(SurfaceKHR::SurfaceKHR, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(SurfaceKHR::SurfaceKHR, vkCreateWin32SurfaceKHR(static_cast<VkInstance>(*this->get<std::shared_ptr<Instance>>()), surfaceCreateInfoKHR, nullptr, &this->_vkHandle));
 }
 #endif
 
 SurfaceKHR::~SurfaceKHR()
 {
-    if (this->_vkSurfaceKHR != nullptr)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Instance>>() != nullptr)
     {
-        vkDestroySurfaceKHR(static_cast<VkInstance>(*this->_instance), this->_vkSurfaceKHR, nullptr);
+        vkDestroySurfaceKHR(static_cast<VkInstance>(*this->get<std::shared_ptr<Instance>>()), this->_vkHandle, nullptr);
     }
-}
-
-SurfaceKHR::SurfaceKHR(SurfaceKHR&& rhs)
-{
-    this->_instance = std::move(rhs._instance);
-    this->_vkSurfaceKHR = std::move(rhs._vkSurfaceKHR);
-
-    rhs._instance = nullptr;
-    rhs._vkSurfaceKHR = nullptr;
-}
-
-SurfaceKHR& SurfaceKHR::operator=(SurfaceKHR&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_instance = std::move(rhs._instance);
-        this->_vkSurfaceKHR = std::move(rhs._vkSurfaceKHR);
-        rhs._instance = nullptr;
-        rhs._vkSurfaceKHR = nullptr;
-    }
-    return *this;
-}
-
-SurfaceKHR::operator VkSurfaceKHR() const
-{
-    return this->_vkSurfaceKHR;
 }

@@ -15,32 +15,29 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <set>
 
 //
 // Project includes
 //
 
 #include "PhysicalDevice.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class Instance
+    class Instance : public Internal::VkWrapper<VkInstance>
     {
-    private:
-        VkInstance _vkInstance;
-
     public:
-        Instance(VkInstanceCreateInfo* instanceCreateInfo);
+        explicit Instance(VkInstanceCreateInfo* instanceCreateInfo);
+        Instance(const std::vector<const char *>& layers, const std::vector<const char *>& extensions);
         ~Instance();
 
     public:
         Instance(const Instance&) = delete;
+        Instance(Instance&&) = default;
         Instance& operator=(const Instance&) = delete;
-        Instance(Instance&&);
-        Instance& operator=(Instance&&);
-
-        // VkInstance cast
-        explicit operator VkInstance() const;
+        Instance& operator=(Instance&&) = default;
 
     public:
         // Physical devices

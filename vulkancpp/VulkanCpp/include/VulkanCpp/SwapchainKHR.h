@@ -20,28 +20,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class SwapchainKHR
+    class SwapchainKHR : public Internal::VkWrapper<VkSwapchainKHR, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkSwapchainKHR _vkSwapchainKHR;
-
     public:
         SwapchainKHR();
-        SwapchainKHR(std::shared_ptr<Device> device, VkSwapchainCreateInfoKHR* vkSwapchainCreateInfoKHR);
+        SwapchainKHR(const std::shared_ptr<Device>& device, VkSwapchainCreateInfoKHR* vkSwapchainCreateInfoKHR);
         ~SwapchainKHR();
 
     public:
         SwapchainKHR(const SwapchainKHR&) = delete;
+        SwapchainKHR(SwapchainKHR&&) = default;
         SwapchainKHR& operator=(const SwapchainKHR&) = delete;
-        SwapchainKHR(SwapchainKHR&&);
-        SwapchainKHR& operator=(SwapchainKHR&&);
-
-        // VkSwapchainKHR cast
-        explicit operator VkSwapchainKHR() const;
+        SwapchainKHR& operator=(SwapchainKHR&&) = default;
 
         // Image
         std::vector<Image> getImagesKHR();

@@ -18,14 +18,12 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class Queue
+    class Queue : public Internal::VkWrapper<VkQueue>
     {
-    private:
-        VkQueue _vkQueue;
-
         // TODO: Do not expose publicly
     public:
         Queue();
@@ -34,15 +32,12 @@ namespace VulkanCpp
 
     public:
         Queue(const Queue&) = delete;
+        Queue(Queue&&) = default;
         Queue& operator=(const Queue&) = delete;
-        Queue(Queue&&);
-        Queue& operator=(Queue&&);
-
-        // VkQueue cast
-        explicit operator VkQueue() const;
+        Queue& operator=(Queue&&) = default;
 
         void waitIdle();
-        void submit(VkSubmitInfo* vkSubmitInfo, const Fence& fence);
+        void submit(VkSubmitInfo* vkSubmitInfo);
     };
 }
 

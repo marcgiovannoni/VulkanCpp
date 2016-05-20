@@ -38,10 +38,14 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="include\VulkanCpp\Buffer.h" />
+    <ClInclude Include="include\VulkanCpp\Command.h" />
     <ClInclude Include="include\VulkanCpp\CommandBuffer.h" />
     <ClInclude Include="include\VulkanCpp\CommandPool.h" />
     <ClInclude Include="include\VulkanCpp\Device.h" />
     <ClInclude Include="include\VulkanCpp\Fence.h" />
+    <ClInclude Include="include\VulkanCpp\Framebuffer.h" />
+    <ClInclude Include="include\VulkanCpp\Handle.hpp" />
     <ClInclude Include="include\VulkanCpp\Image.h" />
     <ClInclude Include="include\VulkanCpp\ImageView.h" />
     <ClInclude Include="include\VulkanCpp\Instance.h" />
@@ -61,10 +65,12 @@
     <ClInclude Include="src\VkDebugLogging.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Commandbuffer.cpp" />
     <ClCompile Include="src\CommandPool.cpp" />
     <ClCompile Include="src\Device.cpp" />
     <ClCompile Include="src\Fence.cpp" />
+    <ClCompile Include="src\Framebuffer.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\ImageView.cpp" />
     <ClCompile Include="src\Instance.cpp" />

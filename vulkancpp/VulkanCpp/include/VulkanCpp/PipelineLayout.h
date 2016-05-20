@@ -19,27 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class PipelineLayout
+    class PipelineLayout : public Internal::VkWrapper<VkPipelineLayout, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkPipelineLayout _vkPipelineLayout;
-
     public:
         PipelineLayout();
-        PipelineLayout(std::shared_ptr<Device> device, VkPipelineLayoutCreateInfo* vkPipelineLayoutCreateInfo);
+        PipelineLayout(const std::shared_ptr<Device>& device, VkPipelineLayoutCreateInfo* vkPipelineLayoutCreateInfo);
         ~PipelineLayout();
 
     public:
-        PipelineLayout(PipelineLayout&&);
         PipelineLayout(const PipelineLayout&) = delete;
-        PipelineLayout& operator=(PipelineLayout&&);
+        PipelineLayout(PipelineLayout&&) = default;
         PipelineLayout& operator=(const PipelineLayout&) = delete;
-
-        explicit operator VkPipelineLayout() const;
+        PipelineLayout& operator=(PipelineLayout&&) = default;
     };
 }
 

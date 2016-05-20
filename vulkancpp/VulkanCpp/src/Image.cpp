@@ -9,38 +9,17 @@
 
 using namespace VulkanCpp;
 
-Image::Image() : _vkImage(nullptr)
+Image::Image()
 {
+    // Empty
 }
 
-Image::Image(VkImage vkImage) : _vkImage(vkImage)
+Image::Image(VkImage vkImage) : VkWrapper(vkImage)
 {
-
+    // Empty
 }
 
 Image::~Image()
 {
+    // Empty
 }
-
-Image::Image(Image&& rhs)
-{
-    this->_vkImage = std::move(rhs._vkImage);
-
-    rhs._vkImage = nullptr;
-}
-
-Image& Image::operator=(Image&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_vkImage = std::move(rhs._vkImage);
-        rhs._vkImage = nullptr;
-    }
-    return *this;
-}
-
-Image::operator VkImage() const
-{
-    return this->_vkImage;
-}
-

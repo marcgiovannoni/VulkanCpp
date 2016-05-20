@@ -20,28 +20,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class Fence
+    class Fence : Internal::VkWrapper<VkFence, std::shared_ptr<Device>>
     {
-    private:
-        VkFence _vkFence;
-        std::shared_ptr<Device> _device;
-
     public:
         Fence();
-        Fence(std::shared_ptr<Device> device, VkFenceCreateInfo* vkFenceCreateInfo);
+        Fence(const std::shared_ptr<Device>& device, VkFenceCreateInfo* vkFenceCreateInfo);
         ~Fence();
 
     public:
         Fence(const Fence&) = delete;
+        Fence(Fence&&) = default;
         Fence& operator=(const Fence&) = delete;
-        Fence(Fence&&);
-        Fence& operator=(Fence&&);
-
-        // VkFence cast
-        explicit operator VkFence() const;
+        Fence& operator=(Fence&&) = default;
 
         void wait(uint64_t timeout) const;
 

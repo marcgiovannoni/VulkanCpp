@@ -22,10 +22,10 @@ namespace VulkanCpp
     class VkException
     {
     private:
-        VkResult _error;
+        const char* _error;
 
     public:
-        explicit VkException(VkResult error);
+        explicit VkException(const char* error);
         virtual ~VkException();
 
     public:
@@ -35,7 +35,7 @@ namespace VulkanCpp
         VkException& operator=(const VkException&) = delete;
 
     public:
-        VkResult getError() const;
+        const char* getError() const;
     };
 }
 

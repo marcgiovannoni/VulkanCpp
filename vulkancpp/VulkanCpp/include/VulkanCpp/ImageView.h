@@ -19,28 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class ImageView
+    class ImageView : public Internal::VkWrapper<VkImageView, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkImageView _vkImageView;
-
     public:
         ImageView();
-        ImageView(std::shared_ptr<Device> device, VkImageViewCreateInfo* vkImageViewCreateInfo);
+        ImageView(const std::shared_ptr<Device>& device, VkImageViewCreateInfo* vkImageViewCreateInfo);
         ~ImageView();
 
     public:
         ImageView(const ImageView&) = delete;
+        ImageView(ImageView&&) = default;
         ImageView& operator=(const ImageView&) = delete;
-        ImageView(ImageView&&);
-        ImageView& operator=(ImageView&&);
-
-        // VkImageView cast
-        explicit operator VkImageView() const;
+        ImageView& operator=(ImageView&&) = default;
     };
 }
 

@@ -9,133 +9,107 @@
 #include "VulkanCpp/Commandbuffer.h"
 #include "VulkanCpp/Device.h"
 #include "VulkanCpp/CommandPool.h"
+#include "VulkanCpp/Command.h"
 
 using namespace VulkanCpp;
 
-CommandBuffer::CommandBuffer() : _device(nullptr), _vkCommandBuffer(nullptr)
+CommandBuffer::CommandBuffer()
 {
+    // Empty
 }
 
-CommandBuffer::CommandBuffer(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBuffer vkCommandBuffer)
-    : _device(device), _commandPool(commandPool), _vkCommandBuffer(vkCommandBuffer)
+CommandBuffer::CommandBuffer(VkCommandBuffer vkCommandBuffer, const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool)
+    : VkWrapper(vkCommandBuffer, device, commandPool)
 {
 
 }
 
-CommandBuffer::CommandBuffer(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo) : _device(device), _commandPool(commandPool)
+CommandBuffer::CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo)
+    : VkWrapper(device, commandPool)
 {
     if (vkCommandBufferAllocateInfo->commandBufferCount != 1)
     {
-        throw new VkException(VK_ERROR_TOO_MANY_OBJECTS);
+        throw new VkException("Can only allocate one CommandPool. Use allocate() for batch allocation.");
     }
 
-    VkResult err = vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &this->_vkCommandBuffer);
-    VK_LOG_ERROR(Device::createCommandBuffer, err);
-    
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(CommandBuffer::CommandBuffer, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &this->_vkHandle));
 }
 
 CommandBuffer::~CommandBuffer()
 {
-    if (this->_vkCommandBuffer != nullptr)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Device>>() != nullptr)
     {
-        vkFreeCommandBuffers(static_cast<VkDevice>(*this->_device), static_cast<VkCommandPool>(*this->_commandPool), 1, &this->_vkCommandBuffer);
+        vkFreeCommandBuffers(static_cast<VkDevice>(*this->get<std::shared_ptr<Device>>()), static_cast<VkCommandPool>(*this->get<std::shared_ptr<CommandPool>>()), 1, &this->_vkHandle);
     }
-}
-
-CommandBuffer::CommandBuffer(CommandBuffer&& rhs)
-{
-    this->_vkCommandBuffer = std::move(rhs._vkCommandBuffer);
-    this->_device = std::move(rhs._device);
-    this->_commandPool = std::move(rhs._commandPool);
-
-    rhs._vkCommandBuffer = nullptr;
-    rhs._device = nullptr;
-    rhs._commandPool = nullptr;
-}
-
-CommandBuffer& CommandBuffer::operator=(CommandBuffer&& rhs)
-{
-    if (this != &rhs)
-    {
-        this->_device = std::move(rhs._device);
-        this->_commandPool = std::move(rhs._commandPool);
-        this->_vkCommandBuffer = std::move(rhs._vkCommandBuffer);
-        rhs._device = nullptr;
-        rhs._commandPool = nullptr;
-        rhs._vkCommandBuffer = nullptr;
-    }
-    return *this;
-}
-
-CommandBuffer::operator VkCommandBuffer() const
-{
-    return this->_vkCommandBuffer;
 }
 
 void CommandBuffer::begin(VkCommandBufferBeginInfo* vkCommandBufferBeginInfo) const
 {
-    VkResult err = vkBeginCommandBuffer(this->_vkCommandBuffer, vkCommandBufferBeginInfo);
-    VK_LOG_ERROR(VulkanRenderer::beginCommandBuffer, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(CommandBuffer::begin, vkBeginCommandBuffer(this->_vkHandle, vkCommandBufferBeginInfo));
 }
 
 void CommandBuffer::end() const
 {
-    VkResult err = vkEndCommandBuffer(this->_vkCommandBuffer);
-    VK_LOG_ERROR(VulkanRenderer::endCommandBuffer, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(CommandBuffer::end, vkEndCommandBuffer(this->_vkHandle));
 }
 
-std::vector<CommandBuffer> CommandBuffer::allocate(std::shared_ptr<Device> device, std::shared_ptr<CommandPool> commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo)
+template <>
+void CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
+{
+    std::vector<VkMemoryBarrier> vkMemoryBarriers(pipelineBarrier.memoryBarriers.cbegin(), pipelineBarrier.memoryBarriers.cend());
+    std::vector<VkBufferMemoryBarrier> vkBufferMemoryBarriers(pipelineBarrier.bufferMemoryBarriers.cbegin(), pipelineBarrier.bufferMemoryBarriers.cend());
+    std::vector<VkImageMemoryBarrier> vkImageMemoryBarriers(pipelineBarrier.imageMemoryBarriers.cbegin(), pipelineBarrier.imageMemoryBarriers.cend());
+
+    vkCmdPipelineBarrier(this->_vkHandle, pipelineBarrier.srcStageMask, pipelineBarrier.dstStageMask, pipelineBarrier.dependencyFlags,
+        static_cast<uint32_t>(pipelineBarrier.memoryBarriers.size()), vkMemoryBarriers.data(),
+        static_cast<uint32_t>(pipelineBarrier.bufferMemoryBarriers.size()), vkBufferMemoryBarriers.data(),
+        static_cast<uint32_t>(pipelineBarrier.imageMemoryBarriers.size()), vkImageMemoryBarriers.data());
+}
+
+template <>
+void CommandBuffer::cmd(const BindPipeline& bindPipeline)
+{
+    vkCmdBindPipeline(this->_vkHandle, bindPipeline.pipelineBindPoint, static_cast<VkPipeline>(bindPipeline.pipeline));
+}
+
+template <>
+void CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
+{
+    std::vector<VkBuffer> vkBuffers(bindVertexBuffer.buffers.size());
+
+    for (size_t i = 0, end = bindVertexBuffer.buffers.size(); i != end; ++i)
+    {
+        vkBuffers[i] = static_cast<VkBuffer>(bindVertexBuffer.buffers[i].get());
+    }
+    std::vector<VkDeviceSize> vkOffsets(bindVertexBuffer.offsets.cbegin(), bindVertexBuffer.offsets.cend());
+
+    vkCmdBindVertexBuffers(this->_vkHandle, bindVertexBuffer.firstBinding, static_cast<uint32_t>(bindVertexBuffer.buffers.size()), vkBuffers.data(), bindVertexBuffer.offsets.data());
+}
+
+template <>
+void CommandBuffer::cmd(const BindIndexBuffer& bindIndexBuffer)
+{
+    vkCmdBindIndexBuffer(this->_vkHandle, static_cast<VkBuffer>(bindIndexBuffer.buffer), bindIndexBuffer.offset, bindIndexBuffer.indexType);
+}
+
+template <>
+void CommandBuffer::cmd(const DrawIndexed& drawIndexed)
+{
+    vkCmdDrawIndexed(this->_vkHandle, drawIndexed.indexCount, drawIndexed.instanceCount, drawIndexed.firstIndex, drawIndexed.vertexOffset, drawIndexed.firstInstance);
+}
+
+std::vector<CommandBuffer> CommandBuffer::allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferAllocateInfo* vkCommandBufferAllocateInfo)
 {
     std::vector<VkCommandBuffer> vkCommandBuffers(vkCommandBufferAllocateInfo->commandBufferCount);
 
-    VkResult err = vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &vkCommandBuffers[0]);
-    VK_LOG_ERROR(Device::createCommandBuffer, err);
+    VK_CHECK_ERROR(CommandBuffer::allocate, vkAllocateCommandBuffers(static_cast<VkDevice>(*device), vkCommandBufferAllocateInfo, &vkCommandBuffers[0]));
 
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
     std::vector<CommandBuffer> commandBuffers;
 
     for (std::vector<VkCommandBuffer>::iterator i = vkCommandBuffers.begin(),
         end = vkCommandBuffers.end(); i != end; ++i)
     {
-        commandBuffers.push_back(CommandBuffer(device, commandPool, *i));
+        commandBuffers.push_back(CommandBuffer(*i, device, commandPool));
     }
     return commandBuffers;
-}
-
-void CommandBuffer::free(std::vector<CommandBuffer>& vector)
-{
-    uint32_t len = static_cast<uint32_t>(vector.size());
-
-    if (len > 0)
-    {
-        std::vector<VkCommandBuffer> vkCommandBuffers;
-
-        vkCommandBuffers.reserve(len);
-        VkDevice device = static_cast<VkDevice>(*vector[0]._device);
-        VkCommandPool commandPool = static_cast<VkCommandPool>(*vector[0]._commandPool);
-
-        for (uint32_t i = 0; i < len; ++i)
-        {
-            vkCommandBuffers[i] = static_cast<VkCommandBuffer>(vector[i]);
-        }
-
-        vkFreeCommandBuffers(device, commandPool, len, &vkCommandBuffers[0]);
-    }
 }

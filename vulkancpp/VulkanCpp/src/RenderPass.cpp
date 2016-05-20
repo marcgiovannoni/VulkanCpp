@@ -11,48 +11,20 @@
 
 using namespace VulkanCpp;
 
-RenderPass::RenderPass() : _device(nullptr), _vkRenderPass(nullptr)
+RenderPass::RenderPass()
 {
+    // Empty
 }
 
-RenderPass::RenderPass(std::shared_ptr<Device> device, VkRenderPassCreateInfo* vkRenderPassCreateInfo) : _device(device)
+RenderPass::RenderPass(const std::shared_ptr<Device>& device, VkRenderPassCreateInfo* vkRenderPassCreateInfo) : VkWrapper(device)
 {
-    VkResult err = vkCreateRenderPass(static_cast<VkDevice>(*this->_device), vkRenderPassCreateInfo, nullptr, &this->_vkRenderPass);
-    VK_LOG_ERROR(RenderPass::RenderPass, err);
-
-    if (err != VK_SUCCESS)
-    {
-        throw new VkException(err);
-    }
+    VK_CHECK_ERROR(RenderPass::RenderPass, vkCreateRenderPass(static_cast<VkDevice>(*device), vkRenderPassCreateInfo, nullptr, &this->_vkHandle));
 }
 
 RenderPass::~RenderPass()
 {
-}
-
-RenderPass::RenderPass(RenderPass&& rhs)
-{
-    this->_device = std::move(rhs._device);
-    this->_vkRenderPass = std::move(rhs._vkRenderPass);
-
-    rhs._device = nullptr;
-    rhs._vkRenderPass = nullptr;
-}
-
-RenderPass& RenderPass::operator=(RenderPass&& rhs)
-{
-    if (this != &rhs)
+    if (this->_vkHandle != nullptr && this->get<std::shared_ptr<Device>>() != nullptr)
     {
-        this->_device = std::move(rhs._device);
-        this->_vkRenderPass = std::move(rhs._vkRenderPass);
-
-        rhs._device = nullptr;
-        rhs._vkRenderPass = nullptr;
+        vkDestroyRenderPass(static_cast<VkDevice>(*this->get<std::shared_ptr<Device>>()), this->_vkHandle, nullptr);
     }
-    return *this;
-}
-
-RenderPass::operator VkRenderPass() const
-{
-    return this->_vkRenderPass;
 }

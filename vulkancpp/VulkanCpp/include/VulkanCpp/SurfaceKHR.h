@@ -19,29 +19,23 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class SurfaceKHR
+    class SurfaceKHR : public Internal::VkWrapper<VkSurfaceKHR, std::shared_ptr<Instance>>
     {
-    private:
-        std::shared_ptr<Instance> _instance;
-        VkSurfaceKHR _vkSurfaceKHR;
-
     public:
         SurfaceKHR();
         template <typename _VkSurfaceCreateInfoKHR>
-        SurfaceKHR(std::shared_ptr<Instance> vulkanInstance, _VkSurfaceCreateInfoKHR* win32SurfaceKHRInfo);
+        SurfaceKHR(const std::shared_ptr<Instance>& instance, _VkSurfaceCreateInfoKHR* win32SurfaceKHRInfo);
         ~SurfaceKHR();
 
     public:
-        SurfaceKHR(SurfaceKHR&&);
         SurfaceKHR(const SurfaceKHR&) = delete;
-        SurfaceKHR& operator=(SurfaceKHR&&);
+        SurfaceKHR(SurfaceKHR&&) = default;
         SurfaceKHR& operator=(const SurfaceKHR&) = delete;
-
-        // VkSurfaceKHR cast
-        explicit operator VkSurfaceKHR() const;
+        SurfaceKHR& operator=(SurfaceKHR&&) = default;
     };
 }
 

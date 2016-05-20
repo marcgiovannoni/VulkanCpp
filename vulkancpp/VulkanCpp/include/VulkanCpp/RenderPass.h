@@ -19,28 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class RenderPass
+    class RenderPass : public Internal::VkWrapper<VkRenderPass, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkRenderPass _vkRenderPass;
-
     public:
         RenderPass();
-        RenderPass(std::shared_ptr<Device> device, VkRenderPassCreateInfo* vkRenderPassCreateInfo);
+        RenderPass(const std::shared_ptr<Device>& device, VkRenderPassCreateInfo* vkRenderPassCreateInfo);
         ~RenderPass();
 
     public:
-        RenderPass(RenderPass&&);
         RenderPass(const RenderPass&) = delete;
-        RenderPass& operator=(RenderPass&&);
+        RenderPass(RenderPass&&) = default;
         RenderPass& operator=(const RenderPass&) = delete;
-
-        // VkRenderPass cast
-        explicit operator VkRenderPass() const;
+        RenderPass& operator=(RenderPass&&) = default;
     };
 }
 

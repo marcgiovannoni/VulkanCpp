@@ -17,13 +17,12 @@
 // Project includes
 //
 
+#include "../src/Internal.hpp"
+
 namespace VulkanCpp
 {
-    class Image
+    class Image : public Internal::VkWrapper<VkImage>
     {
-    private:
-        VkImage _vkImage;
-
     public:
         Image();
         explicit Image(VkImage vkImage);
@@ -31,12 +30,9 @@ namespace VulkanCpp
 
     public:
         Image(const Image&) = delete;
+        Image(Image&&) = default;
         Image& operator=(const Image&) = delete;
-        Image(Image&&);
-        Image& operator=(Image&&);
-
-        // VkImage cast
-        explicit operator VkImage() const;
+        Image& operator=(Image&&) = default;
     };
 }
 

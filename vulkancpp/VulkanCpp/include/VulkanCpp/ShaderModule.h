@@ -19,28 +19,22 @@
 //
 
 #include "VulkanCpp_Fwd.h"
+#include "../src/Internal.hpp"
 
 namespace VulkanCpp
 {
-    class ShaderModule
+    class ShaderModule : public Internal::VkWrapper<VkShaderModule, std::shared_ptr<Device>>
     {
-    private:
-        std::shared_ptr<Device> _device;
-        VkShaderModule _vkShaderModule;
-
     public:
         ShaderModule();
-        ShaderModule(std::shared_ptr<Device> device, VkShaderModuleCreateInfo* vkShaderModuleCreateInfo);
+        ShaderModule(const std::shared_ptr<Device>& device, VkShaderModuleCreateInfo* vkShaderModuleCreateInfo);
         ~ShaderModule();
 
     public:
-        ShaderModule(ShaderModule&&);
         ShaderModule(const ShaderModule&) = delete;
-        ShaderModule& operator=(ShaderModule&&);
+        ShaderModule(ShaderModule&&) = default;
         ShaderModule& operator=(const ShaderModule&) = delete;
-
-        // VkSemaphore cast
-        explicit operator VkShaderModule() const;
+        ShaderModule& operator=(ShaderModule&&) = default;
 
         static ShaderModule fromSPVFile(std::shared_ptr<Device> device, const char* filename);
     };
