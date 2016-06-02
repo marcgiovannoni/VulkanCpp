@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectDeps_UseLinkGuard_DebugLogging>Link</ProjectDeps_UseLinkGuard_DebugLogging>
+  </PropertyGroup>
+  <ItemGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{0973CC79-5F0C-4253-8270-50DA2A0CF514}')">
+    <ProjectReference Include="$([MSBuild]::MakeRelative('$(ProjectDir)', '$(MSBuildThisFileDirectory)Utility.vcxproj'))">
+      <Project>{0973CC79-5F0C-4253-8270-50DA2A0CF514}</Project>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

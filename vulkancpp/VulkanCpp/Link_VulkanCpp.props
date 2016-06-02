@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(SourceRoot)thirdparty\cpp-utils\Link_DebugLogging.props" Condition="'$(ProjectDeps_UseLinkGuard_DebugLogging)' == ''" />
+    <Import Project="$(SourceRoot)thirdparty\cpp-utils\Link_Utility.props" Condition="'$(ProjectDeps_UseLinkGuard_Utility)' == ''" />
   </ImportGroup>
   <ItemGroup Condition="(('$(ConfigurationType)' == 'Application') Or ('$(ConfigurationType)' == 'DynamicLibrary')) And ('$(ProjectGUID)' != '{ad31a5b8-3c49-49f6-b325-c82e7e6011a0}')">
     <ProjectReference Include="$([MSBuild]::MakeRelative('$(ProjectDir)', '$(MSBuildThisFileDirectory)VulkanCpp.vcxproj'))">

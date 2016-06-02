@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(SourceRoot)thirdparty\cpp-utils\$(ProjectDeps_UseLinkMode_VulkanCpp)_DebugLogging.props" Condition="('$(ProjectDeps_UseLinkGuard_DebugLogging)' == '') Or (('$(ProjectDeps_UseLinkGuard_DebugLogging)' == 'Link') And ('$(ProjectDeps_UseLinkMode_VulkanCpp)' == 'Use'))" />
+    <Import Project="$(SourceRoot)thirdparty\cpp-utils\$(ProjectDeps_UseLinkMode_VulkanCpp)_Utility.props" Condition="('$(ProjectDeps_UseLinkGuard_Utility)' == '') Or (('$(ProjectDeps_UseLinkGuard_Utility)' == 'Link') And ('$(ProjectDeps_UseLinkMode_VulkanCpp)' == 'Use'))" />
   </ImportGroup>
   <ItemDefinitionGroup>
     <ClCompile>

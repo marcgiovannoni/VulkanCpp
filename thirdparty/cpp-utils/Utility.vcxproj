@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F97E8D1F-732D-4B53-B0EB-9A101D633A87}</ProjectGuid>
+    <ProjectGuid>{0973CC79-5F0C-4253-8270-50DA2A0CF514}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>VulkanCpp</RootNamespace>
+    <RootNamespace>Utility</RootNamespace>
   </PropertyGroup>
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(SolutionDir), base.props))\base.props" />
   <Import Project="$(PropertySheetsRoot)Utils.Cpp.Default.props" />
@@ -38,11 +38,10 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
-    <ClInclude Include="external\cpp-utils\DebugLogging\include\DebugLogging\DebugLogging.h" />
-    <ClInclude Include="external\cpp-utils\DebugLogging\include\DebugLogging\Platform.h" />
+    <ClInclude Include="external\cpp-utils\Utility\include\Utility\Tuple.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\cpp-utils\DebugLogging\src\DebugLogging.cpp" />
+    <ClCompile Include="external\cpp-utils\Utility\src\foo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,15 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="external\cpp-utils\DebugLogging\include\DebugLogging\DebugLogging.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="external\cpp-utils\DebugLogging\include\DebugLogging\Platform.h">
+    <ClInclude Include="external\cpp-utils\Utility\include\Utility\Tuple.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="external\cpp-utils\DebugLogging\src\DebugLogging.cpp">
+    <ClCompile Include="external\cpp-utils\Utility\src\foo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
