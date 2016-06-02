@@ -26,15 +26,19 @@ namespace VulkanCpp
     class Buffer;
     class Pipeline;
     class RenderPass;
-    class FrameBuffer;
-    struct MemoryBarrier;
-    struct BufferMemoryBarrier;
-    struct ImageMemoryBarrier;
-    struct PipelineBarrier;
-    struct BindPipeline;
-    struct BindVertexBuffer;
-    struct BindIndexBuffer;
-    struct DrawIndexed;
+    class Framebuffer;
+
+    namespace Command
+    {
+        struct MemoryBarrier;
+        struct BufferMemoryBarrier;
+        struct ImageMemoryBarrier;
+        struct PipelineBarrier;
+        struct BindPipeline;
+        struct BindVertexBuffer;
+        struct BindIndexBuffer;
+        struct DrawIndexed;
+    }
 }
 
 #endif  //  __VULKANCPP_FWD_H__

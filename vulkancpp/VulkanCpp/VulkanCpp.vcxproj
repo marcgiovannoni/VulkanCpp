@@ -40,7 +40,7 @@
   <ItemGroup>
     <ClInclude Include="include\VulkanCpp\Buffer.h" />
     <ClInclude Include="include\VulkanCpp\Command.h" />
-    <ClInclude Include="include\VulkanCpp\CommandBuffer.h" />
+    <ClInclude Include="include\VulkanCpp\CommandBuffer.hpp" />
     <ClInclude Include="include\VulkanCpp\CommandPool.h" />
     <ClInclude Include="include\VulkanCpp\Device.h" />
     <ClInclude Include="include\VulkanCpp\Fence.h" />

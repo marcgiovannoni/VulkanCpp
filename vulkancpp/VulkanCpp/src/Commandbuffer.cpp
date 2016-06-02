@@ -6,12 +6,13 @@
 
 #include "VkDebugLogging.hpp"
 #include "VulkanCpp/VkException.h"
-#include "VulkanCpp/Commandbuffer.h"
+#include "VulkanCpp/Commandbuffer.hpp"
 #include "VulkanCpp/Device.h"
 #include "VulkanCpp/CommandPool.h"
 #include "VulkanCpp/Command.h"
 
 using namespace VulkanCpp;
+using namespace VulkanCpp::Command;
 
 CommandBuffer::CommandBuffer()
 {
@@ -21,7 +22,7 @@ CommandBuffer::CommandBuffer()
 CommandBuffer::CommandBuffer(VkCommandBuffer vkCommandBuffer, const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool)
     : VkWrapper(vkCommandBuffer, device, commandPool)
 {
-
+    // Empty
 }
 
 CommandBuffer::CommandBuffer(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, VkCommandBufferLevel level)
@@ -57,23 +58,17 @@ void CommandBuffer::begin(VkCommandBufferUsageFlags flags)
     VK_CHECK_ERROR(CommandBuffer::begin, vkBeginCommandBuffer(this->_vkHandle, &vkCommandBufferBeginInfo));
 }
 
-void CommandBuffer::begin(VkCommandBufferUsageFlags flags,
-    const RenderPass& renderPass,
-    uint32_t subpass,
-    const Framebuffer& framebuffer,
-    bool occlusionQueryEnable,
-    VkQueryControlFlags queryFlags,
-    VkQueryPipelineStatisticFlags pipelineStatistics)
+void CommandBuffer::begin(VkCommandBufferUsageFlags flags, const InheritanceInfo& inheritanceInfo)
 {
     VkCommandBufferInheritanceInfo vkCommandBufferInheritanceInfo = {
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
         nullptr,
-        static_cast<VkRenderPass>(renderPass),
-        subpass,
-        static_cast<VkFramebuffer>(framebuffer),
-        static_cast<VkBool32>(occlusionQueryEnable),
-        queryFlags,
-        pipelineStatistics
+        static_cast<VkRenderPass>(inheritanceInfo.renderPass),
+        inheritanceInfo.subpass,
+        static_cast<VkFramebuffer>(inheritanceInfo.framebuffer),
+        static_cast<VkBool32>(inheritanceInfo.occlusionQueryEnable),
+        inheritanceInfo.queryFlags,
+        inheritanceInfo.pipelineStatistics
     };
     VkCommandBufferBeginInfo vkCommandBufferBeginInfo = {
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -91,7 +86,7 @@ void CommandBuffer::end() const
 }
 
 template <>
-bool CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
+void CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
 {
     std::vector<VkMemoryBarrier> vkMemoryBarriers(pipelineBarrier.memoryBarriers.cbegin(), pipelineBarrier.memoryBarriers.cend());
     std::vector<VkBufferMemoryBarrier> vkBufferMemoryBarriers(pipelineBarrier.bufferMemoryBarriers.cbegin(), pipelineBarrier.bufferMemoryBarriers.cend());
@@ -101,18 +96,16 @@ bool CommandBuffer::cmd(const PipelineBarrier& pipelineBarrier)
         static_cast<uint32_t>(pipelineBarrier.memoryBarriers.size()), vkMemoryBarriers.data(),
         static_cast<uint32_t>(pipelineBarrier.bufferMemoryBarriers.size()), vkBufferMemoryBarriers.data(),
         static_cast<uint32_t>(pipelineBarrier.imageMemoryBarriers.size()), vkImageMemoryBarriers.data());
-    return true;
 }
 
 template <>
-bool CommandBuffer::cmd(const BindPipeline& bindPipeline)
+void CommandBuffer::cmd(const BindPipeline& bindPipeline)
 {
     vkCmdBindPipeline(this->_vkHandle, bindPipeline.pipelineBindPoint, static_cast<VkPipeline>(bindPipeline.pipeline));
-    return true;
 }
 
 template <>
-bool CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
+void CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
 {
     std::vector<VkBuffer> vkBuffers(bindVertexBuffer.buffers.size());
 
@@ -123,25 +116,22 @@ bool CommandBuffer::cmd(const BindVertexBuffer& bindVertexBuffer)
     std::vector<VkDeviceSize> vkOffsets(bindVertexBuffer.offsets.cbegin(), bindVertexBuffer.offsets.cend());
 
     vkCmdBindVertexBuffers(this->_vkHandle, bindVertexBuffer.firstBinding, static_cast<uint32_t>(bindVertexBuffer.buffers.size()), vkBuffers.data(), bindVertexBuffer.offsets.data());
-    return true;
 }
 
 template <>
-bool CommandBuffer::cmd(const BindIndexBuffer& bindIndexBuffer)
+void CommandBuffer::cmd(const BindIndexBuffer& bindIndexBuffer)
 {
     vkCmdBindIndexBuffer(this->_vkHandle, static_cast<VkBuffer>(bindIndexBuffer.buffer), bindIndexBuffer.offset, bindIndexBuffer.indexType);
-    return true;
 }
 
 template <>
-bool CommandBuffer::cmd(const DrawIndexed& drawIndexed)
+void CommandBuffer::cmd(const DrawIndexed& drawIndexed)
 {
     vkCmdDrawIndexed(this->_vkHandle, drawIndexed.indexCount, drawIndexed.instanceCount, drawIndexed.firstIndex, drawIndexed.vertexOffset, drawIndexed.firstInstance);
-    return true;
 }
 
 template <>
-bool CommandBuffer::cmd(const ExecCommands& execCommands)
+void CommandBuffer::cmd(const ExecCommands& execCommands)
 {
     std::vector<VkCommandBuffer> vkCommandBuffers(execCommands.commands.size());
 
@@ -149,9 +139,7 @@ bool CommandBuffer::cmd(const ExecCommands& execCommands)
     {
         vkCommandBuffers[i] = static_cast<VkCommandBuffer>(execCommands.commands[i].get());
     }
-
     vkCmdExecuteCommands(this->_vkHandle, static_cast<uint32_t>(execCommands.commands.size()), vkCommandBuffers.data());
-    return true;
 }
 
 std::vector<CommandBuffer> CommandBuffer::allocate(const std::shared_ptr<Device>& device, const std::shared_ptr<CommandPool>& commandPool, uint32_t bufferCount, VkCommandBufferLevel level)

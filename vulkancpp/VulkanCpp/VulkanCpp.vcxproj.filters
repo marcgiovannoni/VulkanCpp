@@ -42,9 +42,6 @@
     <ClInclude Include="include\VulkanCpp\CommandPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\VulkanCpp\CommandBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\VulkanCpp\SurfaceKHR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,6 +85,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\VulkanCpp\Framebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VulkanCpp\CommandBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

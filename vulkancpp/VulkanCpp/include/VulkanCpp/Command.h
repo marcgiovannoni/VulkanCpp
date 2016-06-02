@@ -22,124 +22,150 @@
 #include "Buffer.h"
 #include "Image.h"
 #include "Pipeline.h"
+#include "RenderPass.h"
+#include "Framebuffer.h"
 
 #undef MemoryBarrier
 
 namespace VulkanCpp
 {
-    typedef struct MemoryBarrier
+    namespace Command
     {
-        VkAccessFlags srcAccessMask;
-        VkAccessFlags dstAccessMask;
-
-        explicit operator VkMemoryBarrier() const
+        typedef struct MemoryBarrier
         {
-            return VkMemoryBarrier{
-                VK_STRUCTURE_TYPE_MEMORY_BARRIER,
-                nullptr,
-                srcAccessMask,
-                dstAccessMask
-            };
-        }
-    } MemoryBarrier;
+            VkAccessFlags srcAccessMask;
+            VkAccessFlags dstAccessMask;
 
-    typedef struct BufferMemoryBarrier
-    {
-        VkAccessFlags srcAccessMask;
-        VkAccessFlags dstAccessMask;
-        uint32_t  srcQueueFamilyIndex;
-        uint32_t dstQueueFamilyIndex;
-        const Buffer& buffer;
-        VkDeviceSize offset;
-        VkDeviceSize size;
+            explicit operator VkMemoryBarrier() const
+            {
+                return VkMemoryBarrier{
+                    VK_STRUCTURE_TYPE_MEMORY_BARRIER,
+                    nullptr,
+                    srcAccessMask,
+                    dstAccessMask
+                };
+            }
+        } MemoryBarrier;
 
-        explicit operator VkBufferMemoryBarrier() const
+        typedef struct BufferMemoryBarrier
         {
-            return VkBufferMemoryBarrier{
-                VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
-                nullptr,
-                srcAccessMask,
-                dstAccessMask,
-                srcQueueFamilyIndex,
-                dstQueueFamilyIndex,
-                static_cast<VkBuffer>(buffer),
-                offset,
-                size
-            };
-        }
-    } BufferMemoryBarrier;
+            VkAccessFlags srcAccessMask;
+            VkAccessFlags dstAccessMask;
+            uint32_t  srcQueueFamilyIndex;
+            uint32_t dstQueueFamilyIndex;
+            const Buffer& buffer;
+            VkDeviceSize offset;
+            VkDeviceSize size;
 
-    typedef struct ImageMemoryBarrier
-    {
-        VkAccessFlags srcAccessMask;
-        VkAccessFlags dstAccessMask;
-        VkImageLayout oldLayout;
-        VkImageLayout newLayout;
-        uint32_t srcQueueFamilyIndex;
-        uint32_t dstQueueFamilyIndex;
-        const Image& image;
-        VkImageSubresourceRange subresourceRange;
+            explicit operator VkBufferMemoryBarrier() const
+            {
+                return VkBufferMemoryBarrier{
+                    VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+                    nullptr,
+                    srcAccessMask,
+                    dstAccessMask,
+                    srcQueueFamilyIndex,
+                    dstQueueFamilyIndex,
+                    static_cast<VkBuffer>(buffer),
+                    offset,
+                    size
+                };
+            }
+        } BufferMemoryBarrier;
 
-        explicit operator VkImageMemoryBarrier() const
+        typedef struct ImageMemoryBarrier
         {
-            return VkImageMemoryBarrier{
-                VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                nullptr,
-                srcAccessMask,
-                dstAccessMask,
-                oldLayout,
-                newLayout,
-                srcQueueFamilyIndex,
-                dstQueueFamilyIndex,
-                static_cast<VkImage>(image),
-                subresourceRange
-            };
-        }
-    } ImageMemoryBarrier;
+            VkAccessFlags srcAccessMask;
+            VkAccessFlags dstAccessMask;
+            VkImageLayout oldLayout;
+            VkImageLayout newLayout;
+            uint32_t srcQueueFamilyIndex;
+            uint32_t dstQueueFamilyIndex;
+            const Image& image;
+            VkImageSubresourceRange subresourceRange;
 
-    typedef struct PipelineBarrier
-    {
-        VkPipelineStageFlags                        srcStageMask;
-        VkPipelineStageFlags                        dstStageMask;
-        VkDependencyFlags                           dependencyFlags;
-        const std::vector<MemoryBarrier>&           memoryBarriers;
-        const std::vector<BufferMemoryBarrier>&     bufferMemoryBarriers;
-        const std::vector<ImageMemoryBarrier>&      imageMemoryBarriers;
-    } PipelineBarrier;
+            explicit operator VkImageMemoryBarrier() const
+            {
+                return VkImageMemoryBarrier{
+                    VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                    nullptr,
+                    srcAccessMask,
+                    dstAccessMask,
+                    oldLayout,
+                    newLayout,
+                    srcQueueFamilyIndex,
+                    dstQueueFamilyIndex,
+                    static_cast<VkImage>(image),
+                    subresourceRange
+                };
+            }
+        } ImageMemoryBarrier;
 
-    typedef struct BindPipeline
-    {
-        VkPipelineBindPoint pipelineBindPoint;
-        const Pipeline& pipeline;
-    } BindPipeline;
+        typedef struct PipelineBarrier
+        {
+            VkPipelineStageFlags                        srcStageMask;
+            VkPipelineStageFlags                        dstStageMask;
+            VkDependencyFlags                           dependencyFlags;
+            const std::vector<MemoryBarrier>&           memoryBarriers;
+            const std::vector<BufferMemoryBarrier>&     bufferMemoryBarriers;
+            const std::vector<ImageMemoryBarrier>&      imageMemoryBarriers;
+        } PipelineBarrier;
 
-    typedef struct BindVertexBuffer
-    {
-        uint32_t firstBinding;
-        const std::vector<std::reference_wrapper<const Buffer>>& buffers;
-        const std::vector<VkDeviceSize>& offsets;
-    } BindVertexBuffer;
+        typedef struct BindPipeline
+        {
+            VkPipelineBindPoint pipelineBindPoint;
+            const Pipeline& pipeline;
+        } BindPipeline;
 
-    typedef struct BindIndexBuffer
-    {
-        const Buffer& buffer;
-        VkDeviceSize offset;
-        VkIndexType indexType;
-    } BindIndexBuffer;
+        typedef struct BindVertexBuffer
+        {
+            uint32_t firstBinding;
+            const std::vector<std::reference_wrapper<const Buffer>>& buffers;
+            const std::vector<VkDeviceSize>& offsets;
+        } BindVertexBuffer;
 
-    typedef struct DrawIndexed
-    {
-        uint32_t indexCount;
-        uint32_t instanceCount;
-        uint32_t firstIndex;
-        int32_t vertexOffset;
-        uint32_t firstInstance;
-    } DrawIndexed;
+        typedef struct BindIndexBuffer
+        {
+            const Buffer& buffer;
+            VkDeviceSize offset;
+            VkIndexType indexType;
+        } BindIndexBuffer;
 
-    typedef struct ExecCommands
-    {
-        std::vector<std::reference_wrapper<CommandBuffer>> commands;
-    } ExecCommands;
+        typedef struct DrawIndexed
+        {
+            uint32_t indexCount;
+            uint32_t instanceCount;
+            uint32_t firstIndex;
+            int32_t vertexOffset;
+            uint32_t firstInstance;
+        } DrawIndexed;
+
+        typedef struct ExecCommands
+        {
+            std::vector<std::reference_wrapper<CommandBuffer>> commands;
+        } ExecCommands;
+
+        template <typename... _Commands>
+        struct RecordRenderPass
+        {
+            const VulkanCpp::RenderPass& renderPass;
+            const Framebuffer& framebuffer;
+            VkRect2D renderArea;
+            std::vector<VkClearValue> clearValues;
+            VkSubpassContents contents;
+            std::tuple<_Commands...> commands;
+
+            RecordRenderPass(const VulkanCpp::RenderPass& renderPass,
+                const Framebuffer& framebuffer,
+                VkRect2D renderArea,
+                std::vector<VkClearValue> clearValues,
+                VkSubpassContents contents,
+                _Commands&&...  commands) : renderPass(renderPass), framebuffer(framebuffer), renderArea(renderArea), clearValues(clearValues), contents(contents)
+            {
+                commands = std::make_tuple(std::forward<_Commands>(commands)...);
+            }
+        };
+    }
 }
 
 #endif  //  __COMMAND_H__
