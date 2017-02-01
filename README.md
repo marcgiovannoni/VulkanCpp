@@ -1,5 +1,7 @@
-# vulkancpp
+# Vulkancpp
 
 ### Work in progress
 
-Inspired from Google employee work.
+Cpp wrapper for Vulkan Graphics API.
+
+Inspired from Google work.
